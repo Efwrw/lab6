@@ -17,6 +17,10 @@ class CollectionManager(
         return ++currentID
     }
 
+    fun checkID(id: Int) : Boolean {
+        return organizationCollection.find {it.id == id } == null
+    }
+
     fun checkFullNameUnique(fullName: String) : Boolean = organizationCollection.any { it.fullName == fullName }
 
     fun clear() {
@@ -37,7 +41,7 @@ class CollectionManager(
 
     fun removeLower(organization: Organization) = organizationCollection.removeIf { it < organization}
 
-    fun countLower(organization: Organization) = organizationCollection.removeIf { it < organization}
+    fun countLower(organization: Organization) = organizationCollection.count { it < organization}
 
     fun getInitializationDate(): String{
         return if (organizationCollection.isEmpty()) "Коллекция еще не создана"
@@ -50,7 +54,7 @@ class CollectionManager(
     }
 
     override fun updateById(id: Int, organization: Organization) {
-        organizationCollection.removeIf { it.id == id }
+        organizationCollection.removeIf { it.id == organization.id }
         organizationCollection.addLast(organization)
     }
 
