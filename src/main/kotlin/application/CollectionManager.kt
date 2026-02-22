@@ -54,8 +54,21 @@ class CollectionManager(
     }
 
     override fun updateById(id: Int, organization: Organization) {
-        organizationCollection.removeIf { it.id == organization.id }
-        organizationCollection.addLast(organization)
+        if (checkID(id)){
+            organizationCollection.removeIf { it.id == organization.id }
+            val generatedOrg = Organization(
+                id = id,
+                name = organization.name,
+                coordinates = organization.coordinates,
+                creationDate = organization.creationDate,
+                annualTurnover = organization.annualTurnover,
+                fullName = organization.fullName,
+                employeesCount = organization.employeesCount,
+                type = organization.type,
+                officialAddress = organization.officialAddress
+            )
+            organizationCollection.addLast(generatedOrg)
+        }
     }
 
     override fun removeById(id: Int) {

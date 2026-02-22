@@ -20,8 +20,10 @@ class Update (
         catch (e: Throwable) {
             throw WrongArgumentException("Неверный формат аргумента.")
         }
-        val org: Organization = inputReader.readOrganization(collectionManager)
-
-        collectionManager.updateById(id, org)
+        if (!collectionManager.checkID(id)) {
+            val org: Organization = inputReader.readOrganization(collectionManager)
+            collectionManager.updateById(id, org)
+        }
+        else app.handleError(WrongArgumentException("Указанный ID ($id) не существует. Воспользуйтесь командой 'add' для добавления новой организации"))
     }
 }
