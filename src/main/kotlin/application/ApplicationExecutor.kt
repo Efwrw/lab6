@@ -2,6 +2,7 @@ package application
 
 import application.exceptions.EmptyArgumentException
 import application.exceptions.EndlessRecursionException
+import application.exceptions.ExitSignal
 import application.exceptions.ScriptInterruptedWhileReadingException
 import application.exceptions.WrongArgumentException
 import data.StorageManager
@@ -44,6 +45,10 @@ class ApplicationExecutor(
                 if (line.isNotBlank()) logger.info(line)
                 invoker.handleInput(line)
                 logsManager.add(line)
+            }
+            catch (e: ExitSignal){
+                io.printLine(e.message)
+                break
             }
             catch (e: SecurityException){
                 logger.warn(e.message!!)
