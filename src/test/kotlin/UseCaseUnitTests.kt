@@ -11,7 +11,6 @@ import java.io.PrintWriter
 
 
 class UseCaseUnitTests {
-
     @Test
     fun `exit command use case`() {
         val cliManager = mockk<IOPort>(relaxed = true)
@@ -67,7 +66,7 @@ class UseCaseUnitTests {
     }
 
     @Test
-    fun `script not found test case`(){
+    fun `script endless recursion test case`(){
         val cliManager = mockk<IOPort>(relaxed = true)
 
         val file = File("w.txt")
@@ -115,4 +114,177 @@ class UseCaseUnitTests {
         val res = storageGateway.downloadCollection("w.xml")
         assertEquals(1, res.size)
     }
+
+    @Test
+    fun `script not found test case`(){
+        val io = mockk<IOPort>(relaxed = true)
+        val pathName = "invalidPath.txt"
+        every { io.readLine() } returns "execute_script $pathName" andThen "exit"
+        val app = ApplicationExecutor(io, "")
+        app.run()
+        verify(exactly = 1) { io.printLine("Похоже, что такого файла ('$pathName (No such file or directory)') вовсе не существовало...") }
+    }
+
+    @Test
+    fun `remove greater organizations use case`(){
+        val io = mockk<IOPort>(relaxed = true)
+        every { io.readLine() } returnsMany listOf(
+            "add",
+            "Test4",
+            "5",
+            "5",
+            "5",
+            "Unique4" ,
+            "",
+            "public",
+            "",
+            "index",
+            "add",
+            "Test3",
+            "5",
+            "5",
+            "5",
+            "Unique3" ,
+            "",
+            "public",
+            "",
+            "index",
+            "add",
+            "Test2",
+            "5",
+            "5",
+            "5",
+            "Unique2" ,
+            "",
+            "public",
+            "",
+            "index",
+            "remove_greater",
+            "Test1",
+            "5",
+            "5",
+            "5",
+            "Unique1" ,
+            "",
+            "public",
+            "",
+            "index",
+            "exit")
+        val app = ApplicationExecutor(io, "")
+        app.run()
+        verify(exactly = 1) { io.printLine("Из коллекции удалено 3 элементов") }
+    }
+    @Test
+    fun `remove lower organizations use case`(){
+        val io = mockk<IOPort>(relaxed = true)
+        every { io.readLine() } returnsMany listOf(
+            "add",
+            "Test1",
+            "5",
+            "5",
+            "5",
+            "Unique1" ,
+            "",
+            "public",
+            "",
+            "index",
+            "add",
+            "Test2",
+            "5",
+            "5",
+            "5",
+            "Unique2" ,
+            "",
+            "public",
+            "",
+            "index",
+            "add",
+            "Test3",
+            "5",
+            "5",
+            "5",
+            "Unique3" ,
+            "",
+            "public",
+            "",
+            "index",
+            "remove_lower",
+            "Test4",
+            "5",
+            "5",
+            "5",
+            "Unique4" ,
+            "",
+            "public",
+            "",
+            "index",
+            "exit")
+        val app = ApplicationExecutor(io, "")
+        app.run()
+        verify(exactly = 1) { io.printLine("Из коллекции удалено 3 элементов") }
+    }
+    @Test
+    fun `remove by id test case`(){
+        val io = mockk<IOPort>(relaxed = true)
+        every { io.readLine() } returnsMany listOf(
+            "add",
+            "Test1",
+            "5",
+            "5",
+            "5",
+            "Unique1" ,
+            "",
+            "public",
+            "",
+            "index",
+            "remove_by_id 1",
+            "exit"
+        )
+        val app = ApplicationExecutor(io, "")
+        app.run()
+        verify(exactly = 1) { io.printLine("Элемент с ID 1 удален.") }
+    }
+
+    @Test
+    fun `sum of employees use case`(){
+        val io = mockk<IOPort>(relaxed = true)
+        every { io.readLine() } returnsMany listOf(
+            "add",
+            "Test1",
+            "5",
+            "5",
+            "5",
+            "Unique1" ,
+            "5",
+            "public",
+            "",
+            "index",
+            "add",
+            "Test2",
+            "5",
+            "5",
+            "5",
+            "Unique2" ,
+            "6",
+            "public",
+            "",
+            "index",
+            "add",
+            "Test3",
+            "5",
+            "5",
+            "5",
+            "Unique3" ,
+            "7",
+            "public",
+            "",
+            "index",
+            "sum_of_employees_count",
+            "exit"
+        )
+        val app = ApplicationExecutor(io, "")
+        app.run()
+        verify(exactly = 1) { io.printLine("Общее количество работяг в коллекции: 18") }
+    }
+
 }
