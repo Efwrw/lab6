@@ -5,14 +5,17 @@ plugins {
     application
 }
 
-group = "org.example"
-version = "1.0-SNAPSHOT"
+allprojects {
+    version = "1.0-SNAPSHOT"
+
+    repositories {
+        mavenCentral()
+    }
+}
 var serializationVersion = "0.90.0"
 var mockkVersion = "1.13.16"
 
-repositories {
-    mavenCentral()
-}
+
 
 dependencies {
     testImplementation("io.mockk:mockk:${mockkVersion}")
