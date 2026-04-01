@@ -3,3 +3,5 @@ plugins {
 }
 rootProject.name = "lab5.2"
 
+include("server")
+include("client")
