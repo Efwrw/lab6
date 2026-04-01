@@ -5,19 +5,11 @@ plugins {
     application
 }
 
-allprojects {
-    version = "1.0-SNAPSHOT"
-
-    repositories {
-        mavenCentral()
-    }
-}
 var serializationVersion = "0.90.0"
 var mockkVersion = "1.13.16"
 
-
-
 dependencies {
+    implementation(project(":api"))
     testImplementation("io.mockk:mockk:${mockkVersion}")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.3")
     implementation(kotlin("stdlib-jdk8"))
@@ -30,7 +22,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("MainKt")
+    mainClass.set("client.ClientMainKt")
 }
 
 kotlin {
