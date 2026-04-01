@@ -1,4 +1,7 @@
 import kotlinx.serialization.Serializable
 
 @Serializable
-class RpcRequest
+data class RpcRequest(
+    val name: String,
+    val data: Map<String, String>
+)
