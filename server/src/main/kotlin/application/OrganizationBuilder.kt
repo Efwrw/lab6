@@ -1,6 +1,6 @@
 package application
 
-import application.exceptions.WrongArgumentException
+
 import domain.Address
 import domain.Coordinates
 import domain.Organization
@@ -30,7 +30,7 @@ fun buildOrganization(cm: CollectionManager, data: Map<String, String>): Organiz
         "private limited company" -> OrganizationType.PRIVATE_LIMITED_COMPANY
         "open joint stock company" -> OrganizationType.OPEN_JOINT_STOCK_COMPANY
         else -> {
-            throw WrongArgumentException("Введён некоректный формат типа организации")
+            throw IllegalStateException("Введён некоректный формат типа организации")
         }
     }
     val addr = Address(street ?: "", zip ?: "")

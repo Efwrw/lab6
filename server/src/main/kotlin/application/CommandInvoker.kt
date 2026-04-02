@@ -20,7 +20,7 @@ class CommandInvoker(val container: ServerContainer) {
     private val removeByID = RemoveByID(container)
     private val update = Update(container)
     private val exit = Exit(container)
-    
+
     fun registerCommand(command: Command) {
         commands[command.name] = command
     }
