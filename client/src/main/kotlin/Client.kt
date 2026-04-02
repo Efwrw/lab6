@@ -18,7 +18,8 @@ class Client {
 
             val rpcRequest = RpcRequest(
                 name = sc.nextLine(),
-                data = HashMap()
+                data = HashMap(),
+                args = listOf()
             )
 
             val rpcRequestJSON = Json.encodeToString(rpcRequest)
