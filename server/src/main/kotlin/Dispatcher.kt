@@ -6,7 +6,7 @@ class Dispatcher(
 
     fun handleRequest(contextRequest: ContextRequest): RpcResponse {
         try {
-            val result = invoker.handleInput(contextRequest.request.name)
+            val result = invoker.handleInput(contextRequest.request)
             return RpcResponse(ApiCodes.SUCCESS,contextRequest.request.data, result)
         } catch (e: Exception){
             val rpc = RpcResponse(ApiCodes.ERROR, contextRequest.request.data, e.message ?: "No error message specified")
