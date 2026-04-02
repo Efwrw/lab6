@@ -1,7 +1,6 @@
 package data
 
 import ServerContainer
-import application.Handler
 import application.StorageGateway
 import domain.Organization
 import nl.adaptivity.xmlutil.serialization.XML
@@ -13,14 +12,16 @@ class StorageManager(val container: ServerContainer): StorageGateway {
     override fun downloadCollection(fileName: String): ArrayDeque<Organization> {
         if (fileName.isEmpty()) return ArrayDeque()
         val file = File(fileName)
-        if (!file.exists())  {println("Файл '$fileName' не найден, коллекция организация не была подгружена :P"); return ArrayDeque()}
+        if (!file.exists()) {
+            println("Файл '$fileName' не найден, коллекция организация не была подгружена :P"); return ArrayDeque()
+        }
         val sc = Scanner(file)
 
         val sb = StringBuilder()
 
 
 
-        while(sc.hasNextLine()){
+        while (sc.hasNextLine()) {
             sb.append(sc.nextLine())
         }
 

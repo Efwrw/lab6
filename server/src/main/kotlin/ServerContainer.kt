@@ -1,16 +1,12 @@
 import application.CommandInvoker
 import data.StorageManager
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import java.io.OutputStreamWriter
-import java.net.Socket
 import java.util.concurrent.LinkedBlockingQueue
 import kotlin.concurrent.thread
 
 class ServerContainer {
+    val commandInvoker = CommandInvoker(this)
     val requestsBuffer = LinkedBlockingQueue<ContextRequest>()
     val dispatcher: Dispatcher = Dispatcher(this)
-    val commandInvoker: CommandInvoker = CommandInvoker(this)
     val listener: Listener = Listener(this)
     val storageManager: StorageManager = StorageManager(this)
     val collectionManager = application.CollectionManager(storageManager.downloadCollection(""))
@@ -21,6 +17,7 @@ class ServerContainer {
         while(true){
             if(requestsBuffer.isNotEmpty()){
                 val contextRequest = requestsBuffer.poll()
+                println(contextRequest)
                 val result = dispatcher.handleRequest(contextRequest)
                 listener.writeClient(contextRequest.clientSocket, result)
             }

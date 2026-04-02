@@ -1,7 +1,6 @@
 package commands
 
 import ServerContainer
-import application.exceptions.ExitSignal
 
 class Exit (
     override val container: ServerContainer
@@ -11,6 +10,6 @@ class Exit (
 
     override fun execute(args: List<String>, data: Map<String, String>): String {
 
-        throw ExitSignal("Отбой парни")
+        throw Exception("Отбой парни")
     }
 }

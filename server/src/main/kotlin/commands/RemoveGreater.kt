@@ -1,7 +1,6 @@
 package commands
 
 import ServerContainer
-import application.Handler
 import application.buildOrganization
 import domain.Organization
 
