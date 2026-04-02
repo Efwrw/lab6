@@ -1,18 +1,29 @@
 import application.CommandInvoker
+import data.StorageManager
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import java.io.OutputStreamWriter
+import java.net.Socket
 import java.util.concurrent.LinkedBlockingQueue
 import kotlin.concurrent.thread
 
 class ServerContainer {
-    val requestsBuffer = LinkedBlockingQueue<RpcRequest>()
+    val requestsBuffer = LinkedBlockingQueue<ContextRequest>()
     val dispatcher: Dispatcher = Dispatcher(this)
     val commandInvoker: CommandInvoker = CommandInvoker(this)
-    val listener: Connector = Connector(this)
+    val listener: Listener = Listener(this)
+    val storageManager: StorageManager = StorageManager(this)
+    val collectionManager = application.CollectionManager(storageManager.downloadCollection(""))
 
     fun up(){
-        thread(true) {listener.run()}
+        thread(true){listener.run()}
+
         while(true){
             if(requestsBuffer.isNotEmpty()){
-                TODO("реализовать логику диспетчера")
+                val contextRequest = requestsBuffer.poll()
+                val result = dispatcher.handleRequest(contextRequest)
+                val rpcResponseJson = Json.encodeToString(result)
+                OutputStreamWriter(contextRequest.clientSocket.getOutputStream()).write(rpcResponseJson)
             }
         }
     }
