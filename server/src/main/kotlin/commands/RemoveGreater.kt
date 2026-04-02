@@ -11,7 +11,7 @@ class RemoveGreater (
     override val name = "remove_greater"
     override val description = "Удаляет из коллекции все элементы, превышающие заданный"
 
-    override fun execute(argument: String, data: Map<String, String>): String {
+    override fun execute(args: List<String>, data: Map<String, String>): String {
         val collectionManager = container.collectionManager
 
         val org: Organization = buildOrganization(collectionManager, data)
