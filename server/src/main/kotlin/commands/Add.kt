@@ -1,10 +1,7 @@
 package commands
 
-import RpcRequest
 import ServerContainer
-import application.Handler
 import application.buildOrganization
-import commands.Command
 import domain.Organization
 
 class Add(
@@ -13,7 +10,7 @@ class Add(
     override val description: String = "Добавляет организацию в коллекцию"
     override val name: String = "add"
 
-    override fun execute(argument: String, data: Map<String, String>): String {
+    override fun execute(args: List<String>, data: Map<String, String>): String {
         val collectionManager = container.collectionManager
 
         val org: Organization = buildOrganization(collectionManager, data)
