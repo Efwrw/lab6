@@ -1,5 +1,6 @@
 import application.CommandInvoker
 import java.util.concurrent.LinkedBlockingQueue
+import kotlin.concurrent.thread
 
 class ServerContainer {
     val requestsBuffer = LinkedBlockingQueue<RpcRequest>()
@@ -8,10 +9,10 @@ class ServerContainer {
     val listener: Connector = Connector(this)
 
     fun up(){
-        listener.run()
+        thread(true) {listener.run()}
         while(true){
             if(requestsBuffer.isNotEmpty()){
-                TODO("добавить логику диспатча")
+                TODO("реализовать логику диспетчера")
             }
         }
     }
