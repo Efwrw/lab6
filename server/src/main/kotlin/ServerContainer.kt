@@ -22,8 +22,7 @@ class ServerContainer {
             if(requestsBuffer.isNotEmpty()){
                 val contextRequest = requestsBuffer.poll()
                 val result = dispatcher.handleRequest(contextRequest)
-                val rpcResponseJson = Json.encodeToString(result)
-                OutputStreamWriter(contextRequest.clientSocket.getOutputStream()).write(rpcResponseJson)
+                listener.writeClient(contextRequest.clientSocket, result)
             }
         }
     }
