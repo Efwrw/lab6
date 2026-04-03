@@ -1,6 +1,7 @@
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.BufferedReader
+import java.io.BufferedWriter
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 
@@ -8,7 +9,7 @@ class Client(clientContainer: ClientContainer) {
     val io = clientContainer.IO
     val resolver = clientContainer.resolver
     val parser = clientContainer.parser
-    fun run(reader: InputStreamReader, writer: OutputStreamWriter) {
+    fun run(buffReader: BufferedReader, writer: BufferedWriter) {
         try {
             io.printBefore("> ")
             val input = io.readLine()
@@ -16,7 +17,6 @@ class Client(clientContainer: ClientContainer) {
             val first = arrayOfArgs[0]
             arrayOfArgs.drop(0)
 
-            val buffReader = BufferedReader(reader)
 
             val rpcRequest = RpcRequest(
                 name = first,
@@ -29,7 +29,6 @@ class Client(clientContainer: ClientContainer) {
             println(rpcRequestJSON)
             writer.write(rpcRequestJSON + "\n")
             writer.flush()
-
             val responseFromJson = Json.decodeFromString<RpcResponse>(buffReader.readLine())
             val resolvedResponse = resolver.resolve(responseFromJson)
             io.printLine(resolvedResponse)
