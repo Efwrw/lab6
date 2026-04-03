@@ -1,6 +1,4 @@
 fun main() {
-    val client = Client()
-    while (true){
-        client.run()
-    }
+    val container = ClientContainer()
+    container.up()
 }
