@@ -13,7 +13,7 @@ class Info (
         val collection = collectionManager.getCollection()
 
         if(collection.isEmpty()) {
-            return "Коллекция пуста :("
+            throw IllegalAccessException("коллекция пуста:(")
         }
         else {
             val strBuilder = StringBuilder()
