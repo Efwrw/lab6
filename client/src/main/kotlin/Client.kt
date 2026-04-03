@@ -4,22 +4,26 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.net.Socket
-import java.util.Scanner
 
-class Client {
-    fun run(){
+class Client(clientContainer: ClientContainer) {
+    val io = clientContainer.IO
+    val resolver = clientContainer.resolver
+    val parser = clientContainer.parser
+    fun run(clientSocket: Socket){
         try {
-            println("enter the message")
-            val clientSocket = Socket("127.0.0.1", 5433)
-            val sc = Scanner(System.`in`)
+            io.printBefore("> ")
+            val input = io.readLine()
+            val arrayOfArgs = parser.parse(input ?: "")
+            val first = arrayOfArgs[0]
+            arrayOfArgs.drop(0)
             val reader = InputStreamReader(clientSocket.getInputStream())
             val writer = OutputStreamWriter(clientSocket.getOutputStream())
             val buffReader = BufferedReader(reader)
 
             val rpcRequest = RpcRequest(
-                name = sc.nextLine(),
+                name = first,
                 data = HashMap(),
-                args = listOf()
+                args = arrayOfArgs
             )
 
             val rpcRequestJSON = Json.encodeToString(rpcRequest)
@@ -27,9 +31,12 @@ class Client {
             println(rpcRequestJSON)
             writer.write(rpcRequestJSON + "\n")
             writer.flush()
-            println(buffReader.readLine())
+
+            val responseFromJson = Json.decodeFromString<RpcResponse>(buffReader.readLine())
+            val resolvedResponse = resolver.resolve(responseFromJson)
+            io.printLine(resolvedResponse)
         } catch (e: Exception) {
-            TODO("add client disconnect logic")
+            println(e.printStackTrace())
         }
 
 
