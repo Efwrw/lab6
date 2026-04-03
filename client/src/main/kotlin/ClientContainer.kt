@@ -12,8 +12,8 @@ class ClientContainer {
 
     fun up(){
         val clientSocket = Socket("127.0.0.1", 5433)
-        val reader = InputStreamReader(clientSocket.getInputStream())
-        val writer = OutputStreamWriter(clientSocket.getOutputStream())
+        val reader = InputStreamReader(clientSocket.getInputStream()).buffered()
+        val writer = OutputStreamWriter(clientSocket.getOutputStream()).buffered()
         while (true) {
             client.run(reader, writer)
         }
