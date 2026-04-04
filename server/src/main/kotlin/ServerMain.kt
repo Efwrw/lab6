@@ -1,4 +1,9 @@
+import commands.inner.ExitSignal
+
 fun main() {
     val serverContainer = ServerContainer()
-    serverContainer.up()
+    try{serverContainer.up()}
+    catch(e: ExitSignal){
+        println("сервер выключается")
+    }
 }
