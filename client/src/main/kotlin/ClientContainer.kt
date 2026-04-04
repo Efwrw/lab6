@@ -8,12 +8,10 @@ class ClientContainer {
     val clientEnt = Client(this)
     var socket: SocketChannel? = null
     var channelIO: ChannelIO? = null
-
-
-
+    val listeningPort: Int = 3306
 
     fun up(){
-        val address = InetSocketAddress("127.0.0.1", 5432)
+        val address = InetSocketAddress("127.0.0.1", listeningPort)
         try {
             val client = SocketChannel.open(address)
             client.configureBlocking(true)
