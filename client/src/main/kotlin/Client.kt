@@ -1,11 +1,3 @@
-import jdk.internal.joptsimple.internal.Messages.message
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import java.io.BufferedReader
-import java.io.BufferedWriter
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
-
 class Client(val clientContainer: ClientContainer) {
     val io = clientContainer.IO
     val resolver = clientContainer.resolver
@@ -14,17 +6,8 @@ class Client(val clientContainer: ClientContainer) {
         try {
             val channelIO = clientContainer.channelIO
             io.printBefore("> ")
-            val input = io.readLine()
-            val arrayOfArgs = parser.parse(input ?: "")
-            val first = arrayOfArgs[0]
-            arrayOfArgs.drop(0)
+            val rpcRequest = parser.parse()
 
-
-            val rpcRequest = RpcRequest(
-                name = first,
-                data = HashMap(),
-                args = arrayOfArgs
-            )
 
             channelIO!!.write(rpcRequest)
             val responseFromJson = channelIO.read() ?: return
@@ -32,7 +15,8 @@ class Client(val clientContainer: ClientContainer) {
             val resolvedResponse = resolver.resolve(responseFromJson)
             io.printLine(resolvedResponse)
         } catch (e: Exception) {
-            println(e.printStackTrace())
+            io.printLine("ошибка: " + e.message)
+            throw e
         }
 
 

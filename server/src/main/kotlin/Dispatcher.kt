@@ -2,7 +2,6 @@ class Dispatcher(
     val container: ServerContainer,
 ) {
     val invoker = container.commandInvoker
-    //val listener = container.listener
 
     fun handleRequest(rpcRequest: RpcRequest): RpcResponse {
         try {
