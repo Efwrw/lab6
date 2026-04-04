@@ -3,9 +3,9 @@ import java.io.OutputStreamWriter
 import java.net.Socket
 
 class ClientContainer {
-    val parser = Parser()
     val resolver = ViewResolver()
     val IO: IOPort = CliManager()
+    val parser = Parser(this)
     val client = Client(this)
 
 

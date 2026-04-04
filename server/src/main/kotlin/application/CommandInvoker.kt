@@ -45,7 +45,7 @@ class CommandInvoker(val container: ServerContainer) {
         val command = commands[commandName]
 
         return command?.execute(req.args, req.data)
-            ?: "Команда '$commandName' не найдена. Введите 'help', чтобы ознакомиться со списком доступных команд."
+            ?: throw IllegalCallerException("команда не найдена")
     }
 
     fun getCommands() = commands.values
