@@ -7,11 +7,11 @@ import java.nio.channels.SocketChannel
 class ClientContainer {
     val resolver = ViewResolver()
     val IO: IOPort = CliManager()
+    val parser = Parser(this)
     val clientEnt = Client(this)
     var socket: SocketChannel? = null
     var channelIO: ChannelIO? = null
-    val parser = Parser(this)
-    val client = Client(this)
+
 
 
 

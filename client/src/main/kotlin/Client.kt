@@ -14,25 +14,17 @@ class Client(val clientContainer: ClientContainer) {
         try {
             val channelIO = clientContainer.channelIO
             io.printBefore("> ")
-            val input = io.readLine()
-            val arrayOfArgs = parser.parse(input ?: "")
-            val first = arrayOfArgs[0]
-            arrayOfArgs.drop(0)
+            val rpcRequest = parser.parse()
 
 
-            val rpcRequest = RpcRequest(
-                name = first,
-                data = HashMap(),
-                args = arrayOfArgs
-            )
-
-            channelIO!!.write(rpcRequest)
+            channelIO!!.write(rpcRequest ?: throw IllegalCallerException("команда не верна"))
             val responseFromJson = channelIO.read() ?: return
 
             val resolvedResponse = resolver.resolve(responseFromJson)
             io.printLine(resolvedResponse)
         } catch (e: Exception) {
-            println(e.printStackTrace())
+            io.printLine("ошибка: " + e.message)
+            throw e
         }
 
 
