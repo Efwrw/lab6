@@ -1,11 +1,3 @@
-import jdk.internal.joptsimple.internal.Messages.message
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import java.io.BufferedReader
-import java.io.BufferedWriter
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
-
 class Client(val clientContainer: ClientContainer) {
     val io = clientContainer.IO
     val resolver = clientContainer.resolver
@@ -17,7 +9,7 @@ class Client(val clientContainer: ClientContainer) {
             val rpcRequest = parser.parse()
 
 
-            channelIO!!.write(rpcRequest ?: throw IllegalCallerException("команда не верна"))
+            channelIO!!.write(rpcRequest)
             val responseFromJson = channelIO.read() ?: return
 
             val resolvedResponse = resolver.resolve(responseFromJson)

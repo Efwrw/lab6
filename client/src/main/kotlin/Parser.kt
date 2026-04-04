@@ -7,7 +7,7 @@ class Parser(container: ClientContainer) {
     val commandsNames = commands.keys.toList()
     val io = container.IO
 
-    fun parse(): RpcRequest?{
+    fun parse(): RpcRequest{
         val mainLine = io.readLine()
 
         val tokens = mainLine?.split(" ")
