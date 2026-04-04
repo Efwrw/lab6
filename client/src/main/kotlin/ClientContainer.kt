@@ -5,12 +5,16 @@ import java.net.Socket
 import java.nio.channels.SocketChannel
 
 class ClientContainer {
-    val parser = Parser()
     val resolver = ViewResolver()
     val IO: IOPort = CliManager()
     val clientEnt = Client(this)
     var socket: SocketChannel? = null
     var channelIO: ChannelIO? = null
+    val parser = Parser(this)
+    val client = Client(this)
+
+
+
     fun up(){
         val address = InetSocketAddress("127.0.0.1", 5432)
         try {
