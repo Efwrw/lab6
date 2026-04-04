@@ -7,9 +7,8 @@ import java.nio.channels.ServerSocketChannel
 
 class ServerContainer {
     val commandInvoker = CommandInvoker(this)
-  //  val requestsBuffer = LinkedBlockingQueue<ContextRequest>()
     val dispatcher: Dispatcher = Dispatcher(this)
-    //val listener: Listener = Listener(this)
+    val dispatcherProxy = DispatcherProxy(dispatcher)
     val storageManager: StorageManager = StorageManager(this)
     val collectionManager = application.CollectionManager(storageManager.downloadCollection(""))
 
@@ -54,7 +53,7 @@ class ServerContainer {
                         println(rpcRequest?.data)
                         if (rpcRequest != null) {
                             println("Получен запрос: $rpcRequest")
-                            val rpcResponse = dispatcher.handleRequest(rpcRequest)
+                            val rpcResponse = dispatcherProxy.handleRequest(rpcRequest)
                             println(rpcResponse.data)
                             try {
                                 io.write(rpcResponse)
@@ -62,6 +61,7 @@ class ServerContainer {
                         }
                     } catch (e: Exception) {
                         println("Клиент отключился или произошла ошибка")
+                        println(e.printStackTrace())
                         key.channel().close()
                         key.cancel()
                     }
