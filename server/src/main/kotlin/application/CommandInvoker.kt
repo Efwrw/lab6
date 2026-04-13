@@ -1,6 +1,6 @@
 package application
 
-import RpcRequest
+import Request
 import ServerContainer
 import commands.*
 import commands.Add
@@ -40,12 +40,11 @@ class CommandInvoker(val container: ServerContainer) {
         registerCommand(exit)
     }
 
-    fun handleInput(req: RpcRequest): String {
-        val commandName = req.name.trim()
-        val command = commands[commandName]
+    fun handleInput(req: Request.ExecuteCommand): String {
+        val commandName = req.commandName
+        val command = commands[commandName] ?: throw IllegalCallerException("команда не найдена")
 
-        return command?.execute(req.args, req.data)
-            ?: throw IllegalCallerException("команда не найдена")
+        return command.execute(req.args, mapOf())
     }
 
     fun getCommands() = commands.values

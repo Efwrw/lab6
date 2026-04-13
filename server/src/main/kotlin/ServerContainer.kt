@@ -8,7 +8,6 @@ import java.nio.channels.ServerSocketChannel
 class ServerContainer {
     val commandInvoker = CommandInvoker(this)
     val dispatcher: Dispatcher = Dispatcher(this)
-    val dispatcherProxy = DispatcherProxy(dispatcher)
     val storageManager: StorageManager = StorageManager(this)
     val collectionManager = application.CollectionManager(storageManager.downloadCollection(""))
     val listeningPort: Int = 3306
@@ -50,14 +49,14 @@ class ServerContainer {
 
                     try {
 
-                        val rpcRequest = io.read()
-                        println(rpcRequest?.data)
-                        if (rpcRequest != null) {
-                            println("Получен запрос: $rpcRequest")
-                            val rpcResponse = dispatcherProxy.handleRequest(rpcRequest)
-                            println(rpcResponse.data)
+                        val Request = io.read()
+//                        println(Request?.data)
+                        if (Request != null) {
+                            println("Получен запрос: $Request")
+                            val Response = dispatcher.handleRequest(Request)
+//                            println(Response.data)
                             try {
-                                io.write(rpcResponse)
+                                io.write(Response)
                             } catch (e: Exception) {e.printStackTrace()}
                         }
                     } catch (e: Exception) {

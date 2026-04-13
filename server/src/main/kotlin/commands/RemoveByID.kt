@@ -12,12 +12,12 @@ class RemoveByID  (
         val collectionManager = container.collectionManager
         try {
             if (collectionManager.checkID(args[0].toInt())) {
-                return "Элемента с таким ID не существует."
+                throw IllegalArgumentException("Элемента с таким ID не существует")
             } else {
                 collectionManager.removeById(args[0].toInt())
                 return "Элемент с ID ${args[0]} удален."
             }
-        } catch (ex: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             throw IllegalArgumentException("Введенный аргумент не является числом.")
         }
     }

@@ -7,7 +7,7 @@ class ClientContainer {
     val parser = Parser(this)
     val clientEnt = Client(this)
     var socket: SocketChannel? = null
-    var channelIO: ChannelIO? = null
+    lateinit var channelIO: ChannelIO
     val serverPort: Int = 3306
 
     fun up(){
@@ -21,6 +21,8 @@ class ClientContainer {
             while (true) {
                 clientEnt.run()
             }
+        } catch (_: ExitSignal){
+            return
         } catch (e: Exception) {
             e.printStackTrace()
             return

@@ -10,7 +10,7 @@ class ChannelIO(
     private val sizeBuffer = ByteBuffer.allocate(4)
     private var dataBuffer: ByteBuffer? = null
 
-    fun read(): RpcResponse? {
+    fun read(): Response? {
         if (size == -1) {
             val bytesRead = channel.read(sizeBuffer)
             if (bytesRead == -1) throw Exception("Channel closed")
@@ -29,7 +29,7 @@ class ChannelIO(
         if (dataBuffer!!.hasRemaining()) return null
 
         val json = String(dataBuffer!!.array(), Charsets.UTF_8)
-        val rpc = Json.decodeFromString<RpcResponse>(json)
+        val rpc = Json.decodeFromString<Response>(json)
 
         size = -1
         dataBuffer = null
@@ -37,7 +37,7 @@ class ChannelIO(
         return rpc
     }
 
-    fun write(message: RpcRequest) {
+    fun write(message: Request) {
         val json = Json.encodeToString(message)
         val bodyBytes = json.toByteArray(Charsets.UTF_8)
 
