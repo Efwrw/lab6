@@ -12,6 +12,7 @@ class Help (
         val commandCollection = container.commandInvoker.getCommands()
         val description = StringBuilder()
         commandCollection.forEach { description.append("${it.name} - ${it.description}\n") }
+        description.append("exit - Выйти с клиента")
         return description.toString()
     }
 }
