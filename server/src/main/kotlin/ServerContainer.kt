@@ -10,16 +10,17 @@ class ServerContainer {
     val dispatcher: Dispatcher = Dispatcher(this)
     val storageManager: StorageManager = StorageManager(this)
     val collectionManager = application.CollectionManager(storageManager.downloadCollection(""))
+    val listeningPort: Int = 3306
 
     fun up() {
         val selector = Selector.open()
         val serverSocket = ServerSocketChannel.open()
 
-        serverSocket.bind(InetSocketAddress("127.0.0.1", 3306))
+        serverSocket.bind(InetSocketAddress("127.0.0.1", listeningPort))
         serverSocket.configureBlocking(false)
         serverSocket.register(selector, SelectionKey.OP_ACCEPT)
 
-        println("Сервер запущен на 127.0.0.1:5432")
+        println("Сервер запущен на 127.0.0.1:$listeningPort")
 
         while (true) {
             selector.select()
