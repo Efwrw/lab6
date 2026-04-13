@@ -1,11 +1,11 @@
 class ViewResolver {
-    fun resolve(rpcResponse: RpcResponse): String{
-        val view = when(rpcResponse.code){
-            ApiCodes.SUCCESS -> "успешно: " + rpcResponse.data
-            ApiCodes.ERROR -> "ошибка: " + rpcResponse.data
-            ApiCodes.INFO -> rpcResponse.data
-        }
+    fun resolve(response: Response): String{
+        return when(response){
+            is Response.Info -> response.message
 
-        return view
+            is Response.Error -> "ошибка: " + response.message
+
+            is Response.Shutdown -> throw ExitSignal()
+        }
     }
 }

@@ -3,21 +3,16 @@ class Client(val clientContainer: ClientContainer) {
     val resolver = clientContainer.resolver
     val parser = clientContainer.parser
     fun run() {
-        try {
-            val channelIO = clientContainer.channelIO
-            io.printBefore("> ")
-            val rpcRequest = parser.parse()
+        val channelIO = clientContainer.channelIO
+        io.printBefore("> ")
+        val request = parser.parse()
 
 
-            channelIO!!.write(rpcRequest)
-            val responseFromJson = channelIO.read() ?: return
+        channelIO.write(request)
+        val responseFromJson = channelIO.read() ?: return
 
-            val resolvedResponse = resolver.resolve(responseFromJson)
-            io.printLine(resolvedResponse)
-        } catch (e: Exception) {
-            io.printLine("ошибка: " + e.message)
-            throw e
-        }
+        val resolvedResponse = resolver.resolve(responseFromJson)
+        io.printLine(resolvedResponse)
 
 
     }
