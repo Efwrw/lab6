@@ -23,7 +23,7 @@ class ClientContainer {
             while (true) {
                 clientEnt.run()
             }
-        } catch (e: ExitSignal){
+        } catch (_: ExitSignal){
             return
         } catch (e: Exception) {
             e.printStackTrace()

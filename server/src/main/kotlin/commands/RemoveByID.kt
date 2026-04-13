@@ -17,7 +17,7 @@ class RemoveByID  (
                 collectionManager.removeById(args[0].toInt())
                 return "Элемент с ID ${args[0]} удален."
             }
-        } catch (ex: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             throw IllegalArgumentException("Введенный аргумент не является числом.")
         }
     }
