@@ -15,7 +15,7 @@ class ServerContainer {
         val selector = Selector.open()
         val serverSocket = ServerSocketChannel.open()
 
-        serverSocket.bind(InetSocketAddress("127.0.0.1", 5432))
+        serverSocket.bind(InetSocketAddress("127.0.0.1", 3306))
         serverSocket.configureBlocking(false)
         serverSocket.register(selector, SelectionKey.OP_ACCEPT)
 
