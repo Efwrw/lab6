@@ -8,7 +8,7 @@ class ServerChannelIO(
 ) {
     private var size = -1
     private val sizeBuffer = ByteBuffer.allocate(4)
-    private var dataBuffer: ByteBuffer? = null
+    private lateinit var dataBuffer: ByteBuffer
 
     fun read(): Request? {
         if (size == -1) {
@@ -25,16 +25,15 @@ class ServerChannelIO(
             dataBuffer = ByteBuffer.allocate(size)
         }
 
-        val bytesReadData = channel.read(dataBuffer!!)
+        val bytesReadData = channel.read(dataBuffer)
         if (bytesReadData == -1) throw Exception("Channel closed")
 
-        if (dataBuffer!!.hasRemaining()) return null
+        if (dataBuffer.hasRemaining()) return null
 
-        val json = String(dataBuffer!!.array(), Charsets.UTF_8)
+        val json = String(dataBuffer.array(), Charsets.UTF_8)
         val rpc = Json.decodeFromString<Request>(json)
 
         size = -1
-        dataBuffer = null
 
         return rpc
     }
