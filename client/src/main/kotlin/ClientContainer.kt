@@ -18,8 +18,8 @@ class ClientContainer {
         try {
             val client = SocketChannel.open(address)
             client.configureBlocking(true)
-            this.socket = client
-            this.channelIO = ChannelIO(client)
+            socket = client
+            channelIO = ChannelIO(client)
             println(channelIO.toString())
             timeout = 5000
             while (true) {
