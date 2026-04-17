@@ -1,6 +1,9 @@
 package commands.inner
 
+import ServerContainer
+
 interface InnerCommand {
     val name: String
-    fun execute()
+    val description: String
+    fun execute(context: ServerContainer)
 }
