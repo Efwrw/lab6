@@ -1,11 +1,22 @@
-class ViewResolver {
-    fun resolve(response: Response): String{
+class ViewResolver(
+    private val context: ClientContainer,
+) {
+    fun resolve(response: Response){
         return when(response){
-            is Response.Info -> response.message
+            is Response.Info -> {
+                context.IO.printLine(response.message)
+            }
 
-            is Response.Error -> "ошибка: " + response.message
+            is Response.Error -> {
+                context.IO.printLine("ошибка: " + response.message)
+            }
 
             is Response.Shutdown -> throw ExitSignal()
+
+            is Response.HandShake -> {
+                context.invoker.load(response)
+
+            }
         }
     }
 }
