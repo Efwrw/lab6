@@ -5,24 +5,39 @@ import java.nio.channels.SelectionKey
 import java.nio.channels.Selector
 import java.nio.channels.ServerSocketChannel
 
-class ServerContainer {
+class ServerContainer(
+    filePath: String,
+) {
     val commandInvoker = CommandInvoker(this)
     val dispatcher: Dispatcher = Dispatcher(this)
-    val storageManager: StorageManager = StorageManager(this)
-    val collectionManager = application.CollectionManager(storageManager.downloadCollection(""))
+    val storageManager: StorageManager = StorageManager(this, filePath)
+    val collectionManager = application.CollectionManager(storageManager.downloadCollection())
     val listeningPort: Int = 3306
+    val IO = ServerCli(this)
     fun up() {
         val selector = Selector.open()
         val serverSocket = ServerSocketChannel.open()
-
         serverSocket.bind(InetSocketAddress("127.0.0.1", listeningPort))
         serverSocket.configureBlocking(false)
         serverSocket.register(selector, SelectionKey.OP_ACCEPT)
 
         println("Сервер запущен на 127.0.0.1:$listeningPort")
-
         while (true) {
-            selector.select()
+            val input = IO.processInput()
+            if (input != null) {
+                try {
+                    if (!input.isBlank()) {
+                        val tokens = input.split(" ")
+                        val name = tokens[0]
+                        val args = tokens.drop(1)
+                        commandInvoker.invoke(name, args)
+                    }
+                }
+                catch (e: IllegalArgumentException) {
+                    IO.write(e.message ?:"")
+                }
+            }
+            selector.selectNow()
             val selectionIterator = selector.selectedKeys().iterator()
             while (selectionIterator.hasNext()) {
                 val key = selectionIterator.next()
@@ -59,7 +74,7 @@ class ServerContainer {
                         }
                     } catch (e: Exception) {
                         println("Клиент отключился или произошла ошибка")
-                        println(e.printStackTrace())
+                        //println(e.printStackTrace())
                         key.channel().close()
                         key.cancel()
                     }
