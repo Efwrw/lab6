@@ -40,6 +40,5 @@ class ClientContainer {
             IO.printLine("сервер разорвал подключение")
             return up()
         }
-
     }
 }
