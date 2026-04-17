@@ -2,6 +2,7 @@ package data
 
 import ServerContainer
 import domain.Organization
+import kotlinx.serialization.builtins.ArraySerializer
 import nl.adaptivity.xmlutil.serialization.XML
 import java.io.*
 import java.util.*
@@ -40,9 +41,9 @@ class StorageManager(
         return ArrayDeque(collection)
     }
 
-    fun uploadCollection(collection: ArrayDeque<Organization>, fileName: String) {
+    fun uploadCollection(collection: ArrayDeque<Organization> = ArrayDeque(container.collectionManager.getCollection()), fileName: String = defaultPath) {
         var file: File
-        file = if (fileName.isEmpty()) File(defaultPath ?: throw IllegalArgumentException("Путь к файлу по умолчанию не указан."))
+        file = if (fileName.isBlank()) File(defaultPath)
         else File(fileName)
         val list = collection
             .map(OrganizationDTO::toDto)
