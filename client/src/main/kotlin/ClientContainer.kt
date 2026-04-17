@@ -4,11 +4,12 @@ import java.net.InetSocketAddress
 import java.nio.channels.SocketChannel
 
 class ClientContainer {
-    val resolver = ViewResolver()
+    val resolver = ViewResolver(this)
     val IO: IOPort = CliManager()
     val parser = Parser(this)
     val clientEnt = Client(this)
     var socket: SocketChannel? = null
+    val invoker: ClientInvoker = ClientInvoker(this)
     lateinit var channelIO: ChannelIO
     val serverPort: Int = 3306
     var timeout: Long = 5000
@@ -20,7 +21,9 @@ class ClientContainer {
             client.configureBlocking(true)
             socket = client
             channelIO = ChannelIO(client)
-            println(channelIO.toString())
+            channelIO.write(Request.HandShake(null))
+            val handshakeRespone = channelIO.read() ?: return up()
+            resolver.resolve(handshakeRespone)
             timeout = 5000
             while (true) {
                 clientEnt.run()
@@ -31,11 +34,11 @@ class ClientContainer {
             IO.printLine("не удалось подключится к серверу")
             Thread.sleep(timeout)
             if (timeout < 50000) timeout += 1000
-            up()
+            return up()
         }
         catch (_: IOException){
             IO.printLine("сервер разорвал подключение")
-            up()
+            return up()
         }
 
     }
