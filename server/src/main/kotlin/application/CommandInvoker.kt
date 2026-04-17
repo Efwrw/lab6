@@ -1,25 +1,25 @@
 package application
 
 import Request
+import Response
 import ServerContainer
+import command.CommandSyntax
 import commands.*
 import commands.Add
 
-class CommandInvoker(val container: ServerContainer) {
+class CommandInvoker(val context: ServerContainer) {
     private val commands = mutableMapOf<String, Command>()
 
-    private val add = Add(container)
-    private val show = Show(container)
-    private val countByType = CountByType(container)
-    private val help = Help(container)
-    private val info = Info(container)
-    private val sumOfEmployeesCount = SumOfEmployeesCount(container)
-    private val countLessThanOfficialAddress = CountLessThanOfficialAddress(container)
-    private val removeLower = RemoveLower(container)
-    private val removeGreater = RemoveGreater(container)
-    private val removeByID = RemoveByID(container)
-    private val update = Update(container)
-    private val exit = Exit(container)
+    private val add = Add()
+    private val show = Show()
+    private val countByType = CountByType()
+    private val info = Info()
+    private val sumOfEmployeesCount = SumOfEmployeesCount()
+    private val countLessThanOfficialAddress = CountLessThanOfficialAddress()
+    private val removeLower = RemoveLower()
+    private val removeGreater = RemoveGreater()
+    private val removeByID = RemoveByID()
+    private val update = Update()
 
     fun registerCommand(command: Command) {
         commands[command.name] = command
@@ -29,7 +29,6 @@ class CommandInvoker(val container: ServerContainer) {
         registerCommand(show)
         registerCommand(add)
         registerCommand(countByType)
-        registerCommand(help)
         registerCommand(info)
         registerCommand(sumOfEmployeesCount)
         registerCommand(countLessThanOfficialAddress)
@@ -37,16 +36,19 @@ class CommandInvoker(val container: ServerContainer) {
         registerCommand(removeGreater)
         registerCommand(removeByID)
         registerCommand(update)
-        registerCommand(exit)
     }
 
-    fun handleInput(req: Request.ExecuteCommand): String {
+    fun handleInput(req: Request.ExecuteCommand): Response {
         val commandName = req.commandName
-        val command = commands[commandName] ?: throw IllegalCallerException("команда не найдена")
+        val command = commands[commandName] ?: return  Response.Error("команда не найдена")
 
-        return command.execute(req.args, mapOf())
+        return command.execute(context, req.args)
     }
 
-    fun getCommands() = commands.values
+    fun getCommands(): List<CommandSyntax>{
+        val commandSyntaxes = mutableListOf<CommandSyntax>()
+        commands.forEach {commandSyntaxes.add(it.value.getSyntax())}
+        return commandSyntaxes
+    }
 
 }
