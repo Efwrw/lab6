@@ -7,7 +7,7 @@ class Dispatcher(
        when(request){
            is Request.ExecuteCommand ->  try {
                val result = invoker.handleInput(request)
-               return Response.Info(result)
+               return result
            } catch (_: ExitSignal){
                return Response.Shutdown
            } catch (e: Exception){
@@ -15,6 +15,14 @@ class Dispatcher(
 
                return rpc
            }
+           is Request.HandShake -> try {
+               val response = Response.HandShake(invoker.getCommands())
+               return response
+           }
+           catch (e: Exception){
+               println(e.message ?: "No error message specified")
+           }
        }
+        return Response.Error("Something went wrong")
     }
 }
