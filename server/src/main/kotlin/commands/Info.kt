@@ -1,19 +1,20 @@
 package commands
 
+import Response
 import ServerContainer
 
 class Info (
-    override val container: ServerContainer,
 ): Command {
     override val name = "info"
+    override val args = listOf<String>()
     override val description = "Выводит информацию о коллекции"
 
-    override fun execute(args: List<String>, data: Map<String, String>): String {
-        val collectionManager = container.collectionManager
+    override fun execute(context: ServerContainer, args: List<String>): Response {
+        val collectionManager = context.collectionManager
         val collection = collectionManager.getCollection()
 
         if(collection.isEmpty()) {
-            throw IllegalAccessException("коллекция пуста:(")
+            return Response.Info("коллекция пуста:(")
         }
         else {
             val strBuilder = StringBuilder()
@@ -25,7 +26,7 @@ class Info (
             strBuilder.append("Организации в коллекции:\n")
 
             collect.forEach {strBuilder.append("${it.fullName} с id номер ${it.id}\n")} //небольшой попутный рефакторинг, нужно отвыкать от джава
-            return strBuilder.toString()
+            return Response.Info(strBuilder.toString())
         }
 
     }

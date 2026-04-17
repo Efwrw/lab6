@@ -2,12 +2,12 @@ package commands.inner
 
 import ServerContainer
 
-class Save(val serverContainer: ServerContainer): InnerCommand {
+class Save(): InnerCommand {
     override val name = "save"
-
-    override fun execute() {
-        val collectionManager = serverContainer.collectionManager
-        val storageManager = serverContainer.storageManager
+    override val description = "Сохраняет текущую коллекцию"
+    override fun execute(context: ServerContainer) {
+        val collectionManager = context.collectionManager
+        val storageManager = context.storageManager
 
         val collection = collectionManager.getCollection()
 
