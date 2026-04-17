@@ -13,7 +13,7 @@ class ChannelIO(
     fun read(): Response? {
         if (size == -1) {
             val bytesRead = channel.read(sizeBuffer)
-            if (bytesRead == -1) throw Exception("Channel closed")
+            if (bytesRead == -1)
             if (sizeBuffer.hasRemaining()) return null
 
             sizeBuffer.flip()
