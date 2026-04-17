@@ -1,6 +1,6 @@
 import java.util.Scanner
 
-class CliManager: IOPort {
+class CliManager : IOPort {
     private val scanner = Scanner(System.`in`)
 
     override fun printLine(message: Any?) {

@@ -14,7 +14,7 @@ class ChannelIO(
         if (size == -1) {
             val bytesRead = channel.read(sizeBuffer)
             if (bytesRead == -1)
-            if (sizeBuffer.hasRemaining()) return null
+                if (sizeBuffer.hasRemaining()) return null
 
             sizeBuffer.flip()
             size = sizeBuffer.int
