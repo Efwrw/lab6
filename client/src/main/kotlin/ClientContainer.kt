@@ -3,12 +3,12 @@ import java.net.ConnectException
 import java.net.InetSocketAddress
 import java.nio.channels.SocketChannel
 
-class ClientContainer {
+open class ClientContainer {
     val resolver = ViewResolver(this)
     val IO: IOPort = CliManager()
-    val parser = Parser(this)
     val clientEnt = Client(this)
     var socket: SocketChannel? = null
+    val scriptManager = ScriptManager()
     val invoker: ClientInvoker = ClientInvoker(this)
     lateinit var channelIO: ChannelIO
     val serverPort: Int = 3306
@@ -22,8 +22,8 @@ class ClientContainer {
             socket = client
             channelIO = ChannelIO(client)
             channelIO.write(Request.HandShake(null))
-            val handshakeRespone = channelIO.read() ?: return up()
-            resolver.resolve(handshakeRespone)
+            val handshakeResponse = channelIO.read() ?: return up()
+            resolver.resolve(handshakeResponse)
             timeout = 5000
             while (true) {
                 clientEnt.run()
