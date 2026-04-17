@@ -11,7 +11,6 @@ class ServerContainer {
     val storageManager: StorageManager = StorageManager(this)
     val collectionManager = application.CollectionManager(storageManager.downloadCollection(""))
     val listeningPort: Int = 3306
-
     fun up() {
         val selector = Selector.open()
         val serverSocket = ServerSocketChannel.open()
@@ -25,7 +24,6 @@ class ServerContainer {
         while (true) {
             selector.select()
             val selectionIterator = selector.selectedKeys().iterator()
-            println(selectionIterator)
             while (selectionIterator.hasNext()) {
                 val key = selectionIterator.next()
 
@@ -49,11 +47,11 @@ class ServerContainer {
 
                     try {
 
-                        val Request = io.read()
+                        val request = io.read()
 //                        println(Request?.data)
-                        if (Request != null) {
-                            println("Получен запрос: $Request")
-                            val Response = dispatcher.handleRequest(Request)
+                        if (request != null) {
+                            println("Получен запрос: $request")
+                            val Response = dispatcher.handleRequest(request)
 //                            println(Response.data)
                             try {
                                 io.write(Response)
