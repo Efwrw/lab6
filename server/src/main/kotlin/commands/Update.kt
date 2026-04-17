@@ -18,11 +18,12 @@ class Update (
         try {
             id = args[0].toInt()
         }
-        catch (e: Throwable) {
+        catch (_: Throwable) {
             return Response.Error("Неверный формат аргумента.")
         }
         if (!collectionManager.checkID(id)) {
-            val org: Organization = buildOrganization(collectionManager, args)
+            val preparedArgs = args.drop(1)
+            val org: Organization = buildOrganization(collectionManager, preparedArgs)
             collectionManager.updateById(id, org)
             return Response.Info("Организация успешно обновлена.")
         }
