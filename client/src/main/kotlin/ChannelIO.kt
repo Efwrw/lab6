@@ -1,5 +1,6 @@
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
 
@@ -13,8 +14,8 @@ class ChannelIO(
     fun read(): Response? {
         if (size == -1) {
             val bytesRead = channel.read(sizeBuffer)
-            if (bytesRead == -1)
-                if (sizeBuffer.hasRemaining()) return null
+            if (bytesRead == -1) throw IOException("Соединение с сервером разорвано")
+            if (sizeBuffer.hasRemaining()) return null
 
             sizeBuffer.flip()
             size = sizeBuffer.int
@@ -24,7 +25,7 @@ class ChannelIO(
         }
 
         val bytesReadData = channel.read(dataBuffer)
-        if (bytesReadData == -1) throw Exception("Channel closed")
+        if (bytesReadData == -1) throw IOException("Соединение с сервером разорвано")
 
         if (dataBuffer.hasRemaining()) return null
 

@@ -1,15 +1,18 @@
 package data
 
 import ServerContainer
-import application.StorageGateway
 import domain.Organization
+import kotlinx.serialization.builtins.ArraySerializer
 import nl.adaptivity.xmlutil.serialization.XML
 import java.io.*
 import java.util.*
 import kotlin.collections.ArrayDeque
 
-class StorageManager(val container: ServerContainer): StorageGateway {
-    override fun downloadCollection(fileName: String): ArrayDeque<Organization> {
+class StorageManager(
+    val container: ServerContainer,
+    val defaultPath: String = ""
+) {
+    fun downloadCollection(fileName: String = defaultPath): ArrayDeque<Organization> {
         if (fileName.isEmpty()) return ArrayDeque()
         val file = File(fileName)
         if (!file.exists()) {
@@ -38,8 +41,10 @@ class StorageManager(val container: ServerContainer): StorageGateway {
         return ArrayDeque(collection)
     }
 
-    override fun uploadCollection(collection: ArrayDeque<Organization>, fileName: String) {
-        val file = File(fileName)
+    fun uploadCollection(collection: ArrayDeque<Organization> = ArrayDeque(container.collectionManager.getCollection()), fileName: String = defaultPath) {
+        var file: File
+        file = if (fileName.isBlank()) File(defaultPath)
+        else File(fileName)
         val list = collection
             .map(OrganizationDTO::toDto)
             .toList()

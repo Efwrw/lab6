@@ -6,10 +6,13 @@ import ServerContainer
 import command.CommandSyntax
 import commands.*
 import commands.Add
+import commands.inner.InnerCommand
+import commands.inner.Save
+import commands.inner.Shutdown
 
 class CommandInvoker(val context: ServerContainer) {
     private val commands = mutableMapOf<String, Command>()
-
+    private val serverCommands = mutableMapOf<String, InnerCommand>()
     private val add = Add()
     private val show = Show()
     private val countByType = CountByType()
@@ -36,6 +39,8 @@ class CommandInvoker(val context: ServerContainer) {
         registerCommand(removeGreater)
         registerCommand(removeByID)
         registerCommand(update)
+        serverCommands["shutdown"] = Shutdown()
+        serverCommands["save"] = Save()
     }
 
     fun handleInput(req: Request.ExecuteCommand): Response {
@@ -43,6 +48,10 @@ class CommandInvoker(val context: ServerContainer) {
         val command = commands[commandName] ?: return  Response.Error("команда не найдена")
 
         return command.execute(context, req.args)
+    }
+
+    fun invoke(name: String, args: List<String>){
+        serverCommands[name]?.execute(context, args) ?: throw IllegalArgumentException("Команды $name не существует.")
     }
 
     fun getCommands(): List<CommandSyntax>{
