@@ -1,10 +1,14 @@
 package commands.inner
 
+import ExitSignal
 import ServerContainer
 
-class Shutdown(serverContainer: ServerContainer): InnerCommand {
+class Shutdown (
+): InnerCommand {
     override val name = "shutdown"
-    override fun execute(){
+    override val description = "Завершает процесс сервера"
+
+    override fun execute(context: ServerContainer): Nothing{
         throw ExitSignal()
     }
 }
