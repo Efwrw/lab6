@@ -1,6 +1,5 @@
 package commands.inner
 
-import ExitSignal
 import ServerContainer
 
 class Shutdown (
@@ -8,7 +7,7 @@ class Shutdown (
     override val name = "shutdown"
     override val description = "Завершает процесс сервера"
 
-    override fun execute(context: ServerContainer): Nothing{
+    override fun execute(context: ServerContainer, args: List<String>){
         throw ExitSignal()
     }
 }
