@@ -1,5 +1,7 @@
 import application.CommandInvoker
 import data.StorageManager
+import org.apache.logging.log4j.Level
+import org.apache.logging.log4j.kotlin.logger
 import java.net.InetSocketAddress
 import java.nio.channels.SelectionKey
 import java.nio.channels.Selector
@@ -14,6 +16,7 @@ class ServerContainer(
     val collectionManager = application.CollectionManager(storageManager.downloadCollection())
     val listeningPort: Int = 3306
     val IO = ServerCli(this)
+    val logger = logger()
     fun up() {
         val selector = Selector.open()
         val serverSocket = ServerSocketChannel.open()
@@ -25,29 +28,34 @@ class ServerContainer(
         while (true) {
             val input = IO.processInput()
             if (input != null) {
+                logger.info {input}
                 try {
                     if (!input.isBlank()) {
                         val tokens = input.split(" ")
                         val name = tokens[0]
                         val args = tokens.drop(1)
+                        logger.log(Level.INFO, "$name, $args")
                         commandInvoker.invoke(name, args)
+
                     }
                 }
                 catch (e: IllegalArgumentException) {
                     IO.write(e.message ?:"")
+                    logger.warn { e.message ?: "" }
                 }
             }
             selector.selectNow()
             val selectionIterator = selector.selectedKeys().iterator()
             while (selectionIterator.hasNext()) {
                 val key = selectionIterator.next()
-
+                logger.info {key.toString()}
                 selectionIterator.remove()
 
                 if (!key.isValid) continue
 
                 if (key.isAcceptable) {
                     val client = serverSocket.accept()
+                    logger.info { client.toString() }
                     client.configureBlocking(false)
 
                     val io = ServerChannelIO(client)
@@ -63,16 +71,21 @@ class ServerContainer(
                     try {
 
                         val request = io.read()
+                        logger.info { request.toString() }
 //                        println(Request?.data)
                         if (request != null) {
                             println("Получен запрос: $request")
-                            val Response = dispatcher.handleRequest(request)
+                            val response = dispatcher.handleRequest(request)
+                            logger.info { response }
 //                            println(Response.data)
                             try {
-                                io.write(Response)
-                            } catch (e: Exception) {e.printStackTrace()}
+                                io.write(response)
+                            } catch (e: Exception) {
+                                logger.warn { e.message ?: "" }
+                                e.printStackTrace()}
                         }
                     } catch (e: Exception) {
+                        logger.info { e.message }
                         println("Клиент отключился или произошла ошибка")
                         //println(e.printStackTrace())
                         key.channel().close()
