@@ -54,8 +54,8 @@ class CollectionManager(
     }
 
     override fun updateById(id: Int, organization: Organization) {
-        if (checkID(id)){
-            organizationCollection.removeIf { it.id == organization.id }
+        if (!checkID(id)){
+            organizationCollection.removeIf { it.id == id }
             val generatedOrg = Organization(
                 id = id,
                 name = organization.name,
