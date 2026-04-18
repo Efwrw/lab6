@@ -13,13 +13,13 @@ class ServerChannelIO(
     fun read(): Request? {
         if (size == -1) {
             val bytesRead = channel.read(sizeBuffer)
-            println(bytesRead)
+            //println(bytesRead)
             if (bytesRead == -1) throw Exception("Channel closed")
             if (sizeBuffer.hasRemaining()) return null
 
             sizeBuffer.flip()
             size = sizeBuffer.int
-            println(size)
+            //println(size)
             sizeBuffer.clear()
 
             dataBuffer = ByteBuffer.allocate(size)
