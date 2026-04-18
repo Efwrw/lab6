@@ -8,7 +8,6 @@ fun main(args: Array<String>) {
     val serverContainer = ServerContainer(filePath)
     try{serverContainer.up()}
     catch(e: ExitSignal){
-        serverContainer.storageManager.uploadCollection()
         println("сервер выключается")
     }
 }
