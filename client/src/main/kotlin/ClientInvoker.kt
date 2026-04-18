@@ -86,6 +86,7 @@ class ClientInvoker(
 
     fun load(source: Response.HandShake) {
         val commandsSyntax = source.commands
+        serverCommands.clear()
         commandsSyntax.forEach { serverCommands[it.name] = it }
     }
 
