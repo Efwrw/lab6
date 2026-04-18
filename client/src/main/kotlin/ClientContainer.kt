@@ -30,6 +30,8 @@ open class ClientContainer {
             }
         } catch (_: ExitSignal){
             return
+        } catch (_: IllegalStateException){
+            return
         } catch (_: ConnectException){
             IO.printLine("не удалось подключится к серверу")
             Thread.sleep(timeout)
