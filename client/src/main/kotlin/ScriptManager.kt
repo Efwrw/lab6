@@ -1,18 +1,23 @@
 import java.io.File
 
-class ScriptManager{
+class ScriptManager {
     val buffer: ArrayDeque<MutableList<String>> = ArrayDeque()
     var isRunning = false
     var set: MutableSet<String> = emptySet<String>().toMutableSet()
 
     fun add(path: String) {
         val file = File(path)
-        if (set.contains(path)){
+        if (set.contains(path)) {
             panic()
             throw ScriptError("рекурсия")
         }
         set.add(path)
-        buffer.addLast(file.readLines().reversed().toMutableList())
+        buffer.addLast(
+            file
+                .readLines()
+                .reversed()
+                .toMutableList()
+        )
     }
 
     fun getLine(): String {
@@ -24,7 +29,7 @@ class ScriptManager{
         return lastScript.removeLast()
     }
 
-    fun panic(){
+    fun panic() {
         buffer.clear()
         set.clear()
         isRunning = false
