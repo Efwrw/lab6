@@ -10,6 +10,7 @@ class Help: Command {
         val invoker = context.invoker
         val strBuilder = StringBuilder()
         invoker.serverCommands.forEach { strBuilder.append("${it.key} - ${it.value.description}\n") }
+        invoker.clientCommands.forEach { strBuilder.append("${it.key} - ${it.value.description}\n") }
         io.printLine(strBuilder.toString())
     }
 }

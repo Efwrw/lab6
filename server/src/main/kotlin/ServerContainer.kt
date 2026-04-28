@@ -2,6 +2,7 @@ import application.CommandInvoker
 import data.StorageManager
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.kotlin.logger
+import util.EnvParser
 import java.net.InetSocketAddress
 import java.nio.channels.SelectionKey
 import java.nio.channels.Selector
@@ -14,21 +15,34 @@ class ServerContainer(
     val dispatcher: Dispatcher = Dispatcher(this)
     val storageManager: StorageManager = StorageManager(this, filePath)
     val collectionManager = application.CollectionManager(storageManager.downloadCollection())
-    val listeningPort: Int = 3306
     val IO = ServerCli(this)
     val logger = logger()
+    var serverPort = ""
+    var hostname = ""
+
+    init {
+        val env = EnvParser.getEnvFromFile(".env")
+        serverPort = env["SERVER_PORT"] ?: throw Error("server port should be specified in env")
+        hostname = env["HOST_NAME"] ?: throw Error("hostname should be specified in env")
+    }
+
     fun up() {
         val selector = Selector.open()
         val serverSocket = ServerSocketChannel.open()
-        serverSocket.bind(InetSocketAddress("127.0.0.1", listeningPort))
+        serverSocket.bind(
+            InetSocketAddress(
+                hostname,
+                serverPort.toIntOrNull() ?: throw Error("check for server port format in env file")
+            )
+        )
         serverSocket.configureBlocking(false)
         serverSocket.register(selector, SelectionKey.OP_ACCEPT)
 
-        println("Сервер запущен на 127.0.0.1:$listeningPort")
+        println("Сервер запущен на 127.0.0.1:$serverPort")
         while (true) {
             val input = IO.processInput()
             if (input != null) {
-                logger.info {input}
+                logger.info { input }
                 try {
                     if (!input.isBlank()) {
                         val tokens = input.split(" ")
@@ -38,9 +52,8 @@ class ServerContainer(
                         commandInvoker.invoke(name, args)
 
                     }
-                }
-                catch (e: IllegalArgumentException) {
-                    IO.write(e.message ?:"")
+                } catch (e: IllegalArgumentException) {
+                    IO.write(e.message ?: "")
                     logger.warn { e.message ?: "" }
                 }
             }
@@ -48,7 +61,7 @@ class ServerContainer(
             val selectionIterator = selector.selectedKeys().iterator()
             while (selectionIterator.hasNext()) {
                 val key = selectionIterator.next()
-                logger.info {key.toString()}
+                logger.info { key.toString() }
                 selectionIterator.remove()
 
                 if (!key.isValid) continue
@@ -82,7 +95,8 @@ class ServerContainer(
                                 io.write(response)
                             } catch (e: Exception) {
                                 logger.warn { e.message ?: "" }
-                                e.printStackTrace()}
+                                e.printStackTrace()
+                            }
                         }
                     } catch (e: Exception) {
                         logger.info { e.message }

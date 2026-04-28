@@ -27,7 +27,7 @@ class CollectionManager(
         organizationCollection.clear()
         currentID = 0
     }
-    fun getCollection() : List<Organization> = organizationCollection.toList()
+    fun getCollection() : List<Organization> = organizationCollection.sortedWith(compareBy { it.name }).toList()
 
     fun countType(type: OrganizationType) : Int = organizationCollection.count {it.type == type}
 

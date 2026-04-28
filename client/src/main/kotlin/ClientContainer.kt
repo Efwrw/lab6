@@ -1,3 +1,4 @@
+import util.EnvParser
 import java.io.IOException
 import java.net.ConnectException
 import java.net.InetSocketAddress
@@ -11,11 +12,20 @@ open class ClientContainer {
     val scriptManager = ScriptManager()
     val invoker: ClientInvoker = ClientInvoker(this)
     lateinit var channelIO: ChannelIO
-    val serverPort: Int = 3306
     var timeout: Long = 5000
+    var serverPort = ""
+    var hostname = ""
+    init {
+        val env = EnvParser.getEnvFromFile(".env")
+        serverPort = env["SERVER_PORT"] ?: throw Error("server port should be specified in env")
+        hostname = env["HOST_NAME"] ?: throw Error("hostname should be specified in env")
+    }
 
-    fun up(){
-        val address = InetSocketAddress("127.0.0.1", serverPort)
+    fun up() {
+        val address = InetSocketAddress(
+            hostname,
+            serverPort.toIntOrNull() ?: throw Error("check server port format in env file")
+        )
         try {
             val client = SocketChannel.open(address)
             client.configureBlocking(true)
@@ -28,17 +38,16 @@ open class ClientContainer {
             while (true) {
                 clientEnt.run()
             }
-        } catch (_: ExitSignal){
+        } catch (_: ExitSignal) {
             return
-        } catch (_: IllegalStateException){
+        } catch (_: IllegalStateException) {
             return
-        } catch (_: ConnectException){
+        } catch (_: ConnectException) {
             IO.printLine("не удалось подключится к серверу")
             Thread.sleep(timeout)
             if (timeout < 50000) timeout += 1000
             return up()
-        }
-        catch (_: IOException){
+        } catch (_: IOException) {
             IO.printLine("сервер разорвал подключение")
             return up()
         }
