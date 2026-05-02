@@ -53,3 +53,9 @@ open class ClientContainer {
         }
     }
 }
+
+fun start(init: ClientContainer.() -> Unit): ClientContainer{
+    val container = ClientContainer()
+    container.init()
+    return container
+}
